@@ -13,6 +13,7 @@ npx cap sync
 
 <docgen-index>
 
+* [`sendEvent(...)`](#sendevent)
 * [`get(...)`](#get)
 * [`set(...)`](#set)
 
@@ -20,6 +21,21 @@ npx cap sync
 
 <docgen-api>
 <!--Update the source file JSDoc comments and rerun docgen to update the docs below-->
+
+### sendEvent(...)
+
+```typescript
+sendEvent(options: { key: string; }) => Promise<{ value: any; }>
+```
+
+| Param         | Type                          |
+| ------------- | ----------------------------- |
+| **`options`** | <code>{ key: string; }</code> |
+
+**Returns:** <code>Promise&lt;{ value: any; }&gt;</code>
+
+--------------------
+
 
 ### get(...)
 

@@ -12,9 +12,20 @@ public class AppSettingsPlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "AppSettings"
 
     public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "sendEvent", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "get", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "set", returnType: CAPPluginReturnPromise)
     ]
+
+    @objc func sendEvent(_ call: CAPPluginCall) {
+        guard let key = call.getString("key") else {
+            call.reject("Must provide a key")
+            return
+        }
+
+        NotificationCenter.default.post(name: Notification.Name(key), object: nil)
+        call.resolve(["status": "Event sent to AppDelegate"])
+    }
     
     @objc func get(_ call: CAPPluginCall) {
         guard let key = call.getString("key") else {

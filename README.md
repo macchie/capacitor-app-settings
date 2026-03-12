@@ -16,6 +16,7 @@ npx cap sync
 * [`sendEvent(...)`](#sendevent)
 * [`get(...)`](#get)
 * [`set(...)`](#set)
+* [Type Aliases](#type-aliases)
 
 </docgen-index>
 
@@ -25,14 +26,14 @@ npx cap sync
 ### sendEvent(...)
 
 ```typescript
-sendEvent(options: { key: string; }) => Promise<{ value: any; }>
+sendEvent(options: { key: string; }) => Promise<{ status: string; }>
 ```
 
 | Param         | Type                          |
 | ------------- | ----------------------------- |
 | **`options`** | <code>{ key: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ value: any; }&gt;</code>
+**Returns:** <code>Promise&lt;{ status: string; }&gt;</code>
 
 --------------------
 
@@ -40,14 +41,14 @@ sendEvent(options: { key: string; }) => Promise<{ value: any; }>
 ### get(...)
 
 ```typescript
-get(options: { key: string; }) => Promise<{ value: any; }>
+get(options: { key: string; }) => Promise<{ value: SettingValue | null; }>
 ```
 
 | Param         | Type                          |
 | ------------- | ----------------------------- |
 | **`options`** | <code>{ key: string; }</code> |
 
-**Returns:** <code>Promise&lt;{ value: any; }&gt;</code>
+**Returns:** <code>Promise&lt;{ value: <a href="#settingvalue">SettingValue</a> | null; }&gt;</code>
 
 --------------------
 
@@ -55,13 +56,21 @@ get(options: { key: string; }) => Promise<{ value: any; }>
 ### set(...)
 
 ```typescript
-set(options: { key: string; value: string; }) => Promise<void>
+set(options: { key: string; value: SettingValue; }) => Promise<void>
 ```
 
-| Param         | Type                                         |
-| ------------- | -------------------------------------------- |
-| **`options`** | <code>{ key: string; value: string; }</code> |
+| Param         | Type                                                                           |
+| ------------- | ------------------------------------------------------------------------------ |
+| **`options`** | <code>{ key: string; value: <a href="#settingvalue">SettingValue</a>; }</code> |
 
 --------------------
+
+
+### Type Aliases
+
+
+#### SettingValue
+
+<code>string | number | boolean</code>
 
 </docgen-api>

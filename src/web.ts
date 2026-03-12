@@ -1,19 +1,26 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { AppSettingsPlugin } from './definitions';
+import type { AppSettingsPlugin, SettingValue } from './definitions';
 
 export class AppSettingsWeb extends WebPlugin implements AppSettingsPlugin {
-  async sendEvent(_options: { key: string }): Promise<{ value: string }> {
-    console.log('sendEvent', _options.key);
-    return { value: _options.key };
+  async sendEvent(options: { key: string }): Promise<{ status: string }> {
+    window.dispatchEvent(new CustomEvent(options.key));
+    return { status: 'Event dispatched' };
   }
 
-  async get(_options: { key: string }): Promise<{ value: string }> {
-    console.log('get', _options.key);
-    return { value: _options.key };
+  async get(options: { key: string }): Promise<{ value: SettingValue | null }> {
+    const raw = localStorage.getItem(options.key);
+    if (raw === null) {
+      return { value: null };
+    }
+    try {
+      return { value: JSON.parse(raw) as SettingValue };
+    } catch {
+      return { value: raw };
+    }
   }
 
-  async set(_options: { key: string, value: string }): Promise<void> {
-    console.log('set', _options.key, _options.value);
+  async set(options: { key: string; value: SettingValue }): Promise<void> {
+    localStorage.setItem(options.key, JSON.stringify(options.value));
   }
 }

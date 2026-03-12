@@ -10,20 +10,16 @@ import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 
-import java.util.Map;
-
 @CapacitorPlugin(name = "AppSettings")
 public class AppSettingsPlugin extends Plugin {
 
     private SharedPreferences getPreferences() {
-        Context context = getContext();
-        return context.getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
+        return getContext().getSharedPreferences("AppSettings", Context.MODE_PRIVATE);
     }
 
     @PluginMethod
     public void sendEvent(PluginCall call) {
         String key = call.getString("key");
-
         if (key == null) {
             call.reject("Must provide a key");
             return;
@@ -31,10 +27,11 @@ public class AppSettingsPlugin extends Plugin {
 
         Context context = getContext();
         Intent intent = new Intent(key);
+        intent.setPackage(context.getPackageName());
         context.sendBroadcast(intent);
 
         JSObject ret = new JSObject();
-        ret.put("status", "Event sent to MainActivity");
+        ret.put("status", "Event sent");
         call.resolve(ret);
     }
 
@@ -47,16 +44,7 @@ public class AppSettingsPlugin extends Plugin {
         }
 
         SharedPreferences prefs = getPreferences();
-        if (!prefs.contains(key)) {
-            call.resolve(new JSObject().put("value", null));
-            return;
-        }
-
-        Object value = null;
-        Map<String, ?> allPrefs = prefs.getAll();
-        if (allPrefs.containsKey(key)) {
-            value = allPrefs.get(key);
-        }
+        Object value = prefs.getAll().get(key);
 
         JSObject ret = new JSObject();
         ret.put("value", value);
@@ -71,17 +59,16 @@ public class AppSettingsPlugin extends Plugin {
             return;
         }
 
+        JSObject data = call.getData();
+        if (!data.has("value")) {
+            call.reject("Must provide a value");
+            return;
+        }
+
         try {
-            JSObject data = call.getData();
-            if (!data.has("value")) {
-                call.reject("Must provide a value");
-                return;
-            }
-
-            SharedPreferences prefs = getPreferences();
-            SharedPreferences.Editor editor = prefs.edit();
-
             Object value = data.get("value");
+            SharedPreferences.Editor editor = getPreferences().edit();
+
             if (value instanceof String) {
                 editor.putString(key, (String) value);
             } else if (value instanceof Boolean) {
@@ -92,16 +79,17 @@ public class AppSettingsPlugin extends Plugin {
                 editor.putFloat(key, (Float) value);
             } else if (value instanceof Long) {
                 editor.putLong(key, (Long) value);
+            } else if (value instanceof Double) {
+                editor.putFloat(key, ((Double) value).floatValue());
             } else {
-                call.reject("Unsupported value type");
+                call.reject("Unsupported value type: " + value.getClass().getSimpleName());
                 return;
             }
 
             editor.apply();
+            call.resolve();
         } catch (Exception e) {
-
+            call.reject("Failed to set value: " + e.getMessage(), e);
         }
-
-        call.resolve();
     }
 }

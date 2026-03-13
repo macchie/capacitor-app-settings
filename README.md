@@ -4,8 +4,10 @@ Custom AppSettings plugin
 
 ## Install
 
+_Not published yet_
+
 ```bash
-npm install capacitor-app-settings
+npm install @macchie/capacitor-app-settings
 npx cap sync
 ```
 
